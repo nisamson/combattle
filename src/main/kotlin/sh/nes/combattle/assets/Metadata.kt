@@ -15,6 +15,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import ktx.assets.async.AssetStorage
 import org.graalvm.polyglot.Context
+import java.util.*
 
 
 @Serializable
@@ -90,23 +91,12 @@ data class Card(val name: String,
 
 class NameConflictError(name: String) : RuntimeException("$name was specified multiple times")
 
-//class Storage private constructor(
-//    val factions: Map<String, Faction>,
-//    val pseudoFs: ReadOnlyRamFs,
-//    val storage: AssetStorage
-//) {
-//    companion object {
-//        suspend fun loadResources(resourcePacks: Iterable<String>): Storage {
-//
-//            val manifests = resourcePacks.map { ResourcePackManifest.loadFromPath(it) }
-//
-//        }
-//    }
-//
-//    fun startContext(): Context {
-//        return Context.newBuilder()
-//            .allowIO(true)
-//            .fileSystem(pseudoFs)
-//            .build()
-//    }
-//}
+class Storage {
+    private val backingFactions = mutableMapOf<String, Faction>()
+    val factions: Map<String, Faction> get() = backingFactions
+    private val fs: ReadOnlyRamFs = ReadOnlyRamFs(UUID.randomUUID().toString())
+    val storage: AssetStorage = AssetStorage()
+    private val context: Context = fs.createContext()
+
+    fun loadFaction()
+}
